@@ -1,0 +1,7 @@
+import { prisma } from "@/lib/db/prisma";
+import { starterItemIds } from "@/lib/game/avatar-catalog";
+import { TUTORIAL_LAST_STEP, TUTORIAL_REWARD_ID, type TutorialEvent } from "@/lib/game/tutorial";
+const eventStep: Record<TutorialEvent, number> = { "village-opened": 1, "oscar-talked": 2, "map-opened": 3, "mission-completed": 4, "item-equipped": 5, "chest-opened": 6, "collection-opened": 7 };
+export async function ensureGameProfile(childId: string) { return prisma.childGameProfile.upsert({ where: { childId }, create: { childId, unlockedItemIds: starterItemIds }, update: {} }); }
+export async function recordTutorialEvent(childId: string, event: TutorialEvent) { const profile = await ensureGameProfile(childId); if (!profile.tutorialStarted || profile.tutorialCompleted || profile.tutorialStep !== eventStep[event]) return profile; return prisma.childGameProfile.update({ where: { childId }, data: { tutorialStep: Math.min(TUTORIAL_LAST_STEP, eventStep[event] + 1) } }); }
+export async function finishTutorial(childId: string) { const profile = await ensureGameProfile(childId); const unlockedItemIds = profile.unlockedItemIds.includes(TUTORIAL_REWARD_ID) ? profile.unlockedItemIds : [...profile.unlockedItemIds, TUTORIAL_REWARD_ID]; return prisma.childGameProfile.update({ where: { childId }, data: { tutorialStarted: true, tutorialCompleted: true, tutorialStep: TUTORIAL_LAST_STEP, tutorialRewardClaimed: true, unlockedItemIds } }); }

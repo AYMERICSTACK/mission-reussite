@@ -1,0 +1,19 @@
+"use client";
+import Link from "next/link";
+import { useCallback, useEffect, useState } from "react";
+import { createPortal } from "react-dom";
+import styles from "./TutorialOverlay.module.css";
+import type { TutorialEvent } from "@/lib/game/tutorial";
+type TutorialData = { started: boolean; completed: boolean; step: number; rewardClaimed: boolean; current: { id: number; title: string; message: string; action: string; symbol: string }; totalSteps: number };
+type Props = { childSlug: string; page: "dashboard" | "village" | "map" | "mission" | "avatar" | "collection"; autoEvent?: TutorialEvent };
+const hrefForStep = (childSlug: string, step: number) => ({ 1: `/mission/${childSlug}/village`, 3: `/mission/${childSlug}/carte`, 4: `/mission/${childSlug}`, 5: `/mission/${childSlug}/avatar`, 6: `/mission/${childSlug}/avatar`, 7: `/mission/${childSlug}/collection` }[step] ?? `/mission/${childSlug}`);
+export function TutorialOverlay({ childSlug, page, autoEvent }: Props) {
+ const [data,setData]=useState<TutorialData|null>(null); const [open,setOpen]=useState(true); const [busy,setBusy]=useState(false);
+ const update=useCallback(async(action:string,event?:TutorialEvent)=>{setBusy(true);try{const response=await fetch("/api/tutorial",{method:"PATCH",headers:{"Content-Type":"application/json"},body:JSON.stringify({childSlug,action,event})});if(response.ok)setData(await response.json());}finally{setBusy(false)}},[childSlug]);
+ useEffect(()=>{fetch(`/api/tutorial?child=${encodeURIComponent(childSlug)}`).then(r=>r.ok?r.json():null).then(setData).catch(()=>undefined)},[childSlug]);
+ useEffect(()=>{if(data?.started&&!data.completed&&autoEvent){const timer=window.setTimeout(()=>void update("event",autoEvent),0);return()=>window.clearTimeout(timer)}},[autoEvent,data?.completed,data?.started,update]);
+ useEffect(()=>{const listener=(event:Event)=>{const detail=(event as CustomEvent<TutorialEvent>).detail;if(detail)void update("event",detail)};window.addEventListener("mission-reussite:tutorial",listener);return()=>window.removeEventListener("mission-reussite:tutorial",listener)},[update]);
+ if(typeof document==="undefined"||!data)return null;if(data.completed)return page==="dashboard"?createPortal(<button className={styles.restart} type="button" onClick={()=>{setOpen(true);void update("restart")}}>↻ Revoir le tutoriel</button>,document.body):null;if(!open)return createPortal(<button className={styles.reopen} type="button" onClick={()=>setOpen(true)}>🦉 Reprendre le guide</button>,document.body);
+ const step=data.current;const progress=Math.round((Math.max(0,data.step)/(data.totalSteps-1))*100);const canNavigate=[1,3,4,5,6,7].includes(data.step);
+ return createPortal(<aside className={styles.overlay} aria-live="polite"><div className={styles.top}><span className={styles.symbol}>{step.symbol}</span><div><small>Tutoriel · {Math.min(data.step+1,data.totalSteps)}/{data.totalSteps}</small><strong>{step.title}</strong></div><button type="button" onClick={()=>setOpen(false)} aria-label="Réduire l’aide">×</button></div><p>{step.message}</p><div className={styles.progress}><span style={{width:`${progress}%`}}/></div><div className={styles.actions}>{!data.started?<button type="button" disabled={busy} onClick={()=>void update("start")}>{step.action}</button>:null}{data.started&&canNavigate?<Link href={hrefForStep(childSlug,data.step)}>{step.action}</Link>:null}{data.started&&data.step===8?<button type="button" disabled={busy} onClick={()=>void update("finish")}>{step.action}</button>:null}{data.started&&data.step>1&&data.step<8?<button className={styles.secondary} type="button" disabled={busy} onClick={()=>void update("skip-step")}>Passer cette étape</button>:null}<button className={styles.ghost} type="button" disabled={busy} onClick={()=>void update("skip")}>Quitter le tutoriel</button></div></aside>,document.body);
+}

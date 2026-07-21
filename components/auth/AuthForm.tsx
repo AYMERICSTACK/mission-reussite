@@ -1,0 +1,12 @@
+"use client";
+import Link from "next/link";
+import { useState } from "react";
+import { useRouter } from "next/navigation";
+import styles from "./AuthForm.module.css";
+
+export function AuthForm({ mode }: { mode: "login" | "register" }) {
+  const router = useRouter(); const [loading,setLoading]=useState(false); const [error,setError]=useState<string|null>(null);
+  async function submit(event:React.FormEvent<HTMLFormElement>){event.preventDefault();setLoading(true);setError(null);const values=Object.fromEntries(new FormData(event.currentTarget));const response=await fetch(`/api/auth/${mode}`,{method:"POST",headers:{"Content-Type":"application/json"},body:JSON.stringify(values)});const payload=await response.json().catch(()=>({}));if(!response.ok){setError(payload.error??"Une erreur est survenue.");setLoading(false);return}router.push("/");router.refresh()}
+  const register=mode==="register";
+  return <main className={styles.shell}><section className={styles.card}><div className={styles.brand}><span className={styles.mark}>★</span><span>Mission Réussite</span></div><p className={styles.eyebrow}>{register?"Créer mon espace":"Espace parent"}</p><h1>{register?"Bienvenue dans l’aventure":"Heureux de vous revoir"}</h1><p className={styles.intro}>{register?"Créez votre famille puis ajoutez chaque enfant avec son propre parcours.":"Connectez-vous pour retrouver uniquement votre famille et ses aventures."}</p><form className={styles.form} onSubmit={submit}>{register&&<><label className={styles.field}>Votre prénom ou nom<input name="displayName" required autoComplete="name"/></label><label className={styles.field}>Nom de la famille<input name="familyName" placeholder="Famille Martin" required/></label></>}<label className={styles.field}>Adresse e-mail<input name="email" type="email" required autoComplete="email"/></label><label className={styles.field}>Mot de passe<input name="password" type="password" minLength={8} required autoComplete={register?"new-password":"current-password"}/></label>{error&&<p className={styles.error}>{error}</p>}<button className={styles.submit} disabled={loading}>{loading?"Un instant…":register?"Créer mon espace famille":"Se connecter"}</button></form><p className={styles.switch}>{register?<>Déjà inscrit ? <Link href="/connexion">Se connecter</Link></>:<>Première visite ? <Link href="/inscription">Créer un compte</Link></>}</p></section></main>
+}

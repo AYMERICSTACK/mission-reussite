@@ -1,0 +1,1 @@
+ALTER TABLE "ChildGameProfile" ADD COLUMN "tutorialStarted" BOOLEAN NOT NULL DEFAULT false, ADD COLUMN "tutorialCompleted" BOOLEAN NOT NULL DEFAULT false, ADD COLUMN "tutorialStep" INTEGER NOT NULL DEFAULT 0, ADD COLUMN "tutorialSeenHints" TEXT[] DEFAULT ARRAY[]::TEXT[], ADD COLUMN "tutorialRewardClaimed" BOOLEAN NOT NULL DEFAULT false;

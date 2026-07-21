@@ -1,0 +1,101 @@
+.root { display: grid; gap: 20px; }
+
+.intro {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+  padding: 18px;
+  border-radius: 20px;
+  background: linear-gradient(135deg, #f2edff, #fbfaff);
+}
+
+.introIcon { font-size: 2rem; }
+.intro strong, .intro p { display: block; margin: 0; }
+.intro p { margin-top: 4px; color: #7d7591; font-size: 0.86rem; line-height: 1.5; }
+
+.list { display: grid; gap: 10px; }
+
+.setting {
+  width: 100%;
+  display: grid;
+  grid-template-columns: auto minmax(0, 1fr) auto;
+  align-items: center;
+  gap: 15px;
+  padding: 16px;
+  border: 1px solid #e7e5ef;
+  border-radius: 18px;
+  color: inherit;
+  background: #fff;
+  text-align: left;
+  cursor: pointer;
+  transition: transform 0.18s ease, border-color 0.18s ease, box-shadow 0.18s ease;
+}
+
+.setting:hover {
+  transform: translateY(-1px);
+  border-color: #cfc5f3;
+  box-shadow: 0 12px 32px rgba(57, 47, 104, 0.08);
+}
+
+.icon {
+  width: 44px;
+  height: 44px;
+  display: grid;
+  place-items: center;
+  border-radius: 14px;
+  background: #f2effb;
+  font-size: 1.35rem;
+}
+
+.copy { min-width: 0; }
+.copy strong, .copy small { display: block; }
+.copy strong { color: #302b49; }
+.copy small { margin-top: 4px; color: #827d90; line-height: 1.45; }
+
+.switch {
+  position: relative;
+  width: 48px;
+  height: 27px;
+  border-radius: 999px;
+  background: #d8d7df;
+  transition: background 0.2s ease;
+}
+
+.switchDot {
+  position: absolute;
+  left: 4px;
+  top: 4px;
+  width: 19px;
+  height: 19px;
+  border-radius: 50%;
+  background: #fff;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.18);
+  transition: transform 0.2s ease;
+}
+
+.switchOn { background: #7259d7; }
+.switchOn .switchDot { transform: translateX(21px); }
+
+.test {
+  justify-self: start;
+  padding: 12px 18px;
+  border: 0;
+  border-radius: 14px;
+  color: #fff;
+  background: linear-gradient(135deg, #765fe0, #5843bb);
+  box-shadow: 0 12px 28px rgba(88, 67, 187, 0.22);
+  font-weight: 900;
+  cursor: pointer;
+}
+
+.loading { padding: 30px; color: #77728b; text-align: center; }
+
+@media (max-width: 640px) {
+  .setting { grid-template-columns: auto minmax(0, 1fr); }
+  .switch { grid-column: 2; justify-self: start; }
+  .copy small { font-size: 0.77rem; }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .setting, .switch, .switchDot { transition: none; }
+}

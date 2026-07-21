@@ -1,0 +1,96 @@
+.scene {
+  position: relative;
+  display: block;
+  width: 100%;
+  height: 100%;
+  min-height: 180px;
+  overflow: hidden;
+  border-radius: inherit;
+  isolation: isolate;
+}
+
+.scene > span { position: absolute; display: block; }
+.sky { inset: 0; background: linear-gradient(#c8e4ff, #f7fbff 70%); }
+.sun { top: 15%; right: 15%; width: 36px; height: 36px; border-radius: 50%; background: #ffe28a; box-shadow: 0 0 0 12px rgba(255,226,138,.18); }
+.cloudOne, .cloudTwo { height: 18px; border-radius: 999px; background: rgba(255,255,255,.75); filter: blur(.2px); animation: cloud-drift 8s ease-in-out infinite; }
+.cloudOne { top: 23%; left: 8%; width: 72px; }
+.cloudTwo { top: 35%; right: 20%; width: 48px; animation-delay: -3s; }
+.cloudOne::before, .cloudTwo::before { content:""; position:absolute; width:28px; height:28px; left:14px; bottom:0; border-radius:50%; background:inherit; }
+.backdrop { inset: auto -4% 18% -4%; height: 46%; border-radius: 50% 50% 0 0; background: #91bca0; clip-path: polygon(0 100%, 0 54%, 13% 28%, 24% 58%, 38% 12%, 54% 59%, 68% 26%, 82% 60%, 100% 30%, 100% 100%); }
+.landOne { inset: auto -8% -18% -8%; height: 58%; border-radius: 50% 50% 0 0; background: #5a9c6c; transform: rotate(-3deg); }
+.landTwo { left: 12%; bottom: 9%; width: 24px; height: 70px; background: #4f6d43; border-radius: 12px 12px 4px 4px; box-shadow: 50px -8px 0 -4px #4f6d43, 135px 8px 0 -3px #4f6d43, 206px -4px 0 -5px #4f6d43; }
+.landTwo::before { content:""; position:absolute; width:54px; height:54px; left:-15px; top:-28px; border-radius:50%; background:#75b75e; box-shadow: 50px -5px 0 -4px #78b965, 135px 8px 0 -3px #75b75e, 206px -2px 0 -6px #78b965; }
+.landThree { right: 14%; bottom: 12%; width: 74px; height: 34px; border-radius: 50%; background: rgba(255,255,255,.18); }
+.path { left: 42%; bottom: -12%; width: 26%; height: 62%; border-radius: 50% 50% 0 0; background: linear-gradient(to bottom, #f8dca1, #deaa6d); clip-path: polygon(42% 0, 58% 0, 100% 100%, 0 100%); }
+.sparkOne, .sparkTwo { color:#fff1a7; font-size:13px; animation: twinkle 2.3s ease-in-out infinite; }
+.sparkOne { top:22%; left:26%; }
+.sparkTwo { top:42%; right:13%; animation-delay:-1.2s; }
+.lockIcon { display:none !important; inset:50% auto auto 50%; transform:translate(-50%,-50%); z-index:4; width:58px; height:58px; place-items:center; border-radius:20px; background:rgba(255,255,255,.88); box-shadow:0 16px 35px rgba(30,34,58,.2); font-size:1.5rem; }
+
+.city .sky { background:linear-gradient(#cfd9ff,#f7eafa 68%); }
+.city .backdrop { background:#7468b4; clip-path:polygon(0 100%,0 62%,8% 62%,8% 30%,16% 30%,16% 55%,24% 55%,24% 18%,32% 18%,32% 66%,43% 66%,43% 37%,51% 37%,51% 8%,60% 8%,60% 58%,69% 58%,69% 27%,79% 27%,79% 64%,88% 64%,88% 41%,96% 41%,96% 100%); }
+.city .landOne { background:#b8a4d8; }
+.city .landTwo { display:none; }
+.city .path { background:linear-gradient(#ffe5a9,#c6a5d9); }
+
+.valley .sky { background:linear-gradient(#bde9ff,#f8fff3 70%); }
+.valley .backdrop { background:#75ac69; }
+.valley .landOne { background:#69bb67; }
+.valley .landTwo { background:#79573a; box-shadow:72px 8px 0 -4px #79573a,160px -2px 0 -3px #79573a; }
+.valley .landTwo::before { background:#92cc68; box-shadow:72px 3px 0 -4px #88c65f,160px 0 0 -3px #92cc68; }
+
+.mountain .sky { background:linear-gradient(#a9d6ff,#eff7ff 68%); }
+.mountain .backdrop { height:63%; background:#8293a9; clip-path:polygon(0 100%,0 80%,20% 34%,31% 65%,49% 8%,65% 69%,80% 38%,100% 78%,100% 100%); }
+.mountain .backdrop::after { content:""; position:absolute; inset:0; background:#f7fbff; clip-path:polygon(13% 46%,20% 34%,25% 46%,42% 27%,49% 8%,56% 28%,73% 50%,80% 38%,87% 54%,100% 78%,100% 100%,0 100%,0 80%); opacity:.75; }
+.mountain .landOne { background:#526e67; }
+.mountain .landTwo { display:none; }
+
+.ocean .sky { background:linear-gradient(#84dff4,#dffaff 58%); }
+.ocean .backdrop { inset:auto 0 17% 0; height:34%; background:#56bfd6; clip-path:none; border-radius:0; }
+.ocean .landOne { background:#168ab5; border-radius:48% 48% 0 0; }
+.ocean .landTwo { width:10px; height:60px; background:#7b5d3f; box-shadow:165px 4px 0 -2px #7b5d3f; }
+.ocean .landTwo::before { width:50px; height:20px; left:-18px; top:-8px; border-radius:50%; background:#4ac788; box-shadow:165px 4px 0 #4ac788; }
+.ocean .path { display:none; }
+
+.desert .sky { background:linear-gradient(#f9c979,#fff0ca 72%); }
+.desert .sun { background:#fff0a5; box-shadow:0 0 0 17px rgba(255,235,156,.2); }
+.desert .backdrop { background:#d99d57; clip-path:polygon(0 100%,0 60%,20% 28%,42% 70%,65% 17%,100% 67%,100% 100%); }
+.desert .landOne { background:#e8b66b; }
+.desert .landTwo { background:#9e7344; box-shadow:142px 4px 0 -4px #9e7344; }
+.desert .landTwo::before { width:12px; height:32px; left:6px; top:-23px; border-radius:8px; background:#5a9a5c; box-shadow:-8px 9px 0 -2px #5a9a5c,142px 4px 0 -2px #5a9a5c; }
+.desert .path { background:linear-gradient(#ffe8b2,#c99154); }
+
+.stars .sky { background:radial-gradient(circle at 68% 20%,#6a5ed4 0,#29265f 35%,#11142f 100%); }
+.stars .sun { background:#f8e8a4; box-shadow:0 0 0 16px rgba(120,126,255,.18); }
+.stars .cloudOne,.stars .cloudTwo { background:rgba(174,190,255,.18); }
+.stars .backdrop { background:#484079; clip-path:polygon(0 100%,0 78%,16% 55%,34% 72%,49% 30%,68% 69%,82% 48%,100% 72%,100% 100%); }
+.stars .landOne { background:#24224f; }
+.stars .landTwo { display:none; }
+.stars .path { background:linear-gradient(rgba(174,184,255,.7),rgba(109,88,210,.2)); box-shadow:0 0 28px rgba(151,141,255,.42); }
+
+.locked::after { content:""; position:absolute; z-index:3; inset:0; background:linear-gradient(rgba(29,33,54,.38),rgba(29,33,54,.62)); backdrop-filter:grayscale(.45); }
+.locked .lockIcon { display:grid !important; }
+
+@keyframes cloud-drift { 0%,100%{transform:translateX(0)} 50%{transform:translateX(7px)} }
+@keyframes twinkle { 0%,100%{opacity:.35;transform:scale(.7)} 50%{opacity:1;transform:scale(1.2)} }
+@media (prefers-reduced-motion: reduce) { .cloudOne,.cloudTwo,.sparkOne,.sparkTwo{animation:none} }
+
+.hasArtwork { background: #7060c8; }
+.artwork {
+  position: absolute !important;
+  inset: 0;
+  z-index: 0;
+  width: 100% !important;
+  height: 100% !important;
+  object-fit: cover;
+  transform: scale(1.015);
+}
+.lightWash {
+  inset: 0;
+  z-index: 2;
+  pointer-events: none;
+  background: linear-gradient(180deg, rgba(255,255,255,.03), transparent 54%, rgba(35,26,79,.12));
+}
+.hasArtwork .lightWash {
+  background: linear-gradient(180deg, rgba(255,255,255,.04), transparent 62%, rgba(44,29,98,.08));
+}

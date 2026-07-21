@@ -1,0 +1,78 @@
+.portrait {
+  --portrait-primary: #7259f5;
+  --portrait-secondary: #f4b8ff;
+  --portrait-light: #efeaff;
+  position: relative;
+  display: inline-grid;
+  flex: 0 0 auto;
+  place-items: end center;
+  overflow: hidden;
+  border: 1px solid color-mix(in srgb, var(--portrait-primary) 22%, white);
+  border-radius: 35% 35% 30% 30%;
+  background:
+    radial-gradient(circle at 74% 20%, color-mix(in srgb, var(--portrait-secondary) 46%, transparent), transparent 28%),
+    linear-gradient(155deg, color-mix(in srgb, var(--portrait-light) 92%, white), #fff);
+  box-shadow: inset 0 1px 0 rgba(255,255,255,.8), 0 12px 28px color-mix(in srgb, var(--portrait-primary) 18%, transparent);
+}
+
+.portrait::before {
+  content: "";
+  position: absolute;
+  inset: auto 8% 5% 8%;
+  height: 30%;
+  border-radius: 50%;
+  background: color-mix(in srgb, var(--portrait-primary) 12%, transparent);
+  filter: blur(13px);
+}
+
+.portrait svg {
+  position: relative;
+  z-index: 1;
+  display: block;
+  width: 94%;
+  height: 94%;
+  transform-origin: 50% 92%;
+}
+
+.small { width: 54px; height: 54px; }
+.medium { width: 96px; height: 96px; }
+.large { width: min(230px, 100%); height: 220px; }
+
+.sparkle {
+  position: absolute;
+  z-index: 2;
+  top: 10%;
+  right: 10%;
+  color: var(--portrait-secondary);
+  font-size: .82rem;
+  text-shadow: 0 2px 8px rgba(255,255,255,.9);
+}
+
+.animated svg { animation: portrait-breathe 3.8s ease-in-out infinite; }
+.animated .sparkle { animation: portrait-sparkle 2.4s ease-in-out infinite; }
+
+@keyframes portrait-breathe {
+  0%, 100% { transform: translateY(1px) rotate(-.25deg); }
+  50% { transform: translateY(-3px) rotate(.25deg); }
+}
+
+@keyframes portrait-sparkle {
+  0%, 100% { opacity: .45; transform: scale(.75) rotate(0deg); }
+  50% { opacity: 1; transform: scale(1.15) rotate(18deg); }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .animated svg,
+  .animated .sparkle { animation: none; }
+}
+
+/* Art Pack 1: keep portraits visually centered and prevent accidental face cropping. */
+.portrait svg {
+  object-position: 50% 50%;
+}
+.large {
+  overflow: visible;
+}
+.large::before {
+  inset: auto 12% 2% 12%;
+}

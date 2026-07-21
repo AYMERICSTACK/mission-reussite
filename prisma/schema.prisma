@@ -1,0 +1,153 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+}
+
+model ParentAccount {
+  id           String        @id @default(cuid())
+  email        String        @unique
+  displayName  String
+  passwordHash String
+  createdAt    DateTime      @default(now())
+  family       Family?
+  sessions     AuthSession[]
+}
+
+model AuthSession {
+  id        String        @id @default(cuid())
+  tokenHash String        @unique
+  expiresAt DateTime
+  createdAt DateTime      @default(now())
+  accountId String
+  account   ParentAccount @relation(fields: [accountId], references: [id], onDelete: Cascade)
+
+  @@index([accountId])
+  @@index([expiresAt])
+}
+
+model Family {
+  id        String         @id @default(cuid())
+  name      String
+  createdAt DateTime       @default(now())
+  accountId String?        @unique
+  account   ParentAccount? @relation(fields: [accountId], references: [id], onDelete: Cascade)
+  children  Child[]
+}
+
+model Child {
+  id        String    @id @default(cuid())
+  slug      String    @unique
+  firstName String
+  grade     String
+  track     String    @default("alyssio")
+  age       Int?
+  interests String[]  @default([])
+  objective String?
+  familyId  String?
+  family    Family?   @relation(fields: [familyId], references: [id], onDelete: Cascade)
+  createdAt DateTime  @default(now())
+  attempts  Attempt[]
+  cooperationGoals CooperationGoal[]
+  parentEncouragements ParentEncouragement[]
+  gameProfile ChildGameProfile?
+  sideQuests SideQuestProgress[]
+
+  @@index([familyId])
+}
+
+model Mission {
+  id        String    @id
+  title     String
+  category  String
+  skill     String
+  grade     String
+  xp        Int
+  createdAt DateTime  @default(now())
+  attempts Attempt[]
+}
+
+model Attempt {
+  id              String   @id @default(cuid())
+  childId         String
+  missionId       String
+  correctAnswers  Int
+  totalQuestions  Int
+  mistakes        Int
+  hintsUsed       Int
+  durationSeconds Int
+  completedAt     DateTime @default(now())
+  child           Child    @relation(fields: [childId], references: [id], onDelete: Cascade)
+  mission         Mission  @relation(fields: [missionId], references: [id], onDelete: Cascade)
+
+  @@index([childId, completedAt])
+  @@index([missionId])
+}
+
+model CooperationGoal {
+  id          String   @id @default(cuid())
+  childId     String
+  title       String
+  message     String?
+  targetCount Int      @default(3)
+  rewardLabel String?
+  createdAt   DateTime @default(now())
+  expiresAt   DateTime?
+  completedAt DateTime?
+  child       Child    @relation(fields: [childId], references: [id], onDelete: Cascade)
+
+  @@index([childId, createdAt])
+}
+
+model ParentEncouragement {
+  id        String   @id @default(cuid())
+  childId   String
+  message   String
+  createdAt DateTime @default(now())
+  readAt    DateTime?
+  child     Child    @relation(fields: [childId], references: [id], onDelete: Cascade)
+
+  @@index([childId, createdAt])
+}
+
+model ChildGameProfile {
+  id                String   @id @default(cuid())
+  childId           String   @unique
+  coins             Int      @default(0)
+  bonusXp           Int      @default(0)
+  sideQuestBadgeIds String[] @default([])
+  defeatedBossIds   String[] @default([])
+  bossTrophyIds     String[] @default([])
+  legendaryChestIds String[] @default([])
+  tutorialStarted Boolean @default(false)
+  tutorialCompleted Boolean @default(false)
+  tutorialStep Int @default(0)
+  tutorialSeenHints String[] @default([])
+  tutorialRewardClaimed Boolean @default(false)
+  claimedChests     Int      @default(0)
+  unlockedItemIds   String[] @default([])
+  equippedBody      String   @default("body-explorer")
+  equippedOutfit    String?
+  equippedHead      String?
+  equippedAccessory String?
+  equippedCompanion String?  @default("companion-oscar")
+  updatedAt         DateTime @updatedAt
+  child             Child    @relation(fields: [childId], references: [id], onDelete: Cascade)
+}
+
+model SideQuestProgress {
+  id          String   @id @default(cuid())
+  childId     String
+  questId     String
+  acceptedAt  DateTime?
+  completedAt DateTime?
+  claimedAt   DateTime?
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+  child       Child    @relation(fields: [childId], references: [id], onDelete: Cascade)
+
+  @@unique([childId, questId])
+  @@index([childId])
+}
