@@ -69,6 +69,8 @@ export function FamilyManager({
   const [saving, setSaving] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const [form, setForm] = useState(emptyForm);
+  const [childToDelete, setChildToDelete] = useState<Child | null>(null);
+  const [deletingSlug, setDeletingSlug] = useState<string | null>(null);
 
   async function refreshFamily() {
     const response = await fetch("/api/family", { cache: "no-store" });
@@ -77,6 +79,42 @@ export function FamilyManager({
     const data = (await response.json()) as FamilyResponse;
     setFamilyName(data.family?.name ?? "Ma famille");
     setChildren(data.family?.children ?? []);
+  }
+
+  async function deleteChild() {
+    if (!childToDelete) return;
+
+    const child = childToDelete;
+    setDeletingSlug(child.slug);
+    setError(null);
+
+    try {
+      const response = await fetch("/api/family", {
+        method: "DELETE",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ slug: child.slug }),
+      });
+
+      if (!response.ok) {
+        const payload = (await response.json().catch(() => null)) as
+          | { error?: string }
+          | null;
+        throw new Error(payload?.error ?? "Impossible de supprimer ce profil.");
+      }
+
+      setChildren((current) =>
+        current.filter((currentChild) => currentChild.slug !== child.slug),
+      );
+      setChildToDelete(null);
+    } catch (caughtError) {
+      setError(
+        caughtError instanceof Error
+          ? caughtError.message
+          : "Une erreur est survenue pendant la suppression.",
+      );
+    } finally {
+      setDeletingSlug(null);
+    }
   }
 
   async function add(event: React.FormEvent<HTMLFormElement>) {
@@ -192,12 +230,22 @@ export function FamilyManager({
                       </div>
                     </div>
 
-                    <Link
-                      href={`/mission/${child.slug}`}
-                      className={styles.openButton}
-                    >
-                      Ouvrir l’aventure →
-                    </Link>
+                    <div className={styles.childActions}>
+                      <Link
+                        href={`/mission/${child.slug}`}
+                        className={styles.openButton}
+                      >
+                        Ouvrir l’aventure →
+                      </Link>
+                      <button
+                        type="button"
+                        className={styles.deleteButton}
+                        onClick={() => setChildToDelete(child)}
+                        aria-label={`Supprimer le profil de ${child.firstName}`}
+                      >
+                        🗑️ Supprimer
+                      </button>
+                    </div>
                   </article>
                 );
               })}
@@ -325,6 +373,45 @@ export function FamilyManager({
           </button>
         </form>
       </section>
+
+      {childToDelete ? (
+        <div className={styles.modalBackdrop} role="presentation">
+          <section
+            className={styles.confirmModal}
+            role="dialog"
+            aria-modal="true"
+            aria-labelledby="delete-profile-title"
+          >
+            <div className={styles.modalIcon} aria-hidden="true">🗑️</div>
+            <p className={styles.panelLabel}>Suppression définitive</p>
+            <h2 id="delete-profile-title">Supprimer {childToDelete.firstName} ?</h2>
+            <p>
+              Son parcours, ses missions terminées, son avatar et toutes ses
+              récompenses seront définitivement supprimés.
+            </p>
+            <div className={styles.modalActions}>
+              <button
+                type="button"
+                className={styles.cancelButton}
+                onClick={() => setChildToDelete(null)}
+                disabled={deletingSlug === childToDelete.slug}
+              >
+                Annuler
+              </button>
+              <button
+                type="button"
+                className={styles.confirmDeleteButton}
+                onClick={deleteChild}
+                disabled={deletingSlug === childToDelete.slug}
+              >
+                {deletingSlug === childToDelete.slug
+                  ? "Suppression…"
+                  : "Oui, supprimer le profil"}
+              </button>
+            </div>
+          </section>
+        </div>
+      ) : null}
     </main>
   );
 }

@@ -539,3 +539,117 @@
   .openButton { grid-column: 1 / -1; width: 100%; }
   .row { grid-template-columns: 1fr; }
 }
+
+.childActions {
+  display: grid;
+  gap: 8px;
+  min-width: 142px;
+}
+
+.deleteButton {
+  min-height: 34px;
+  padding: 0 12px;
+  border: 1px solid #f2d6d6;
+  border-radius: 11px;
+  color: #a94c4c;
+  background: #fff7f7;
+  font: inherit;
+  font-size: .59rem;
+  font-weight: 900;
+  cursor: pointer;
+  transition: border-color .18s ease, background .18s ease, transform .18s ease;
+}
+
+.deleteButton:hover {
+  transform: translateY(-1px);
+  border-color: #e9b6b6;
+  background: #fff0f0;
+}
+
+.modalBackdrop {
+  position: fixed;
+  z-index: 1000;
+  inset: 0;
+  display: grid;
+  place-items: center;
+  padding: 20px;
+  background: rgba(28, 24, 54, .52);
+  backdrop-filter: blur(8px);
+}
+
+.confirmModal {
+  width: min(460px, 100%);
+  padding: 30px;
+  border: 1px solid rgba(255, 255, 255, .74);
+  border-radius: 28px;
+  background: white;
+  box-shadow: 0 34px 90px rgba(31, 25, 75, .3);
+  text-align: center;
+}
+
+.modalIcon {
+  display: grid;
+  place-items: center;
+  width: 62px;
+  height: 62px;
+  margin: 0 auto 16px;
+  border-radius: 20px;
+  background: #fff0ef;
+  font-size: 1.55rem;
+}
+
+.confirmModal h2 {
+  margin: 8px 0 10px;
+  font-family: "Arial Rounded MT Bold", "Trebuchet MS", Arial, sans-serif;
+  font-size: 1.75rem;
+}
+
+.confirmModal > p:not(.panelLabel) {
+  margin: 0;
+  color: #6f7388;
+  font-size: .78rem;
+  font-weight: 650;
+  line-height: 1.65;
+}
+
+.modalActions {
+  display: grid;
+  grid-template-columns: 1fr 1.35fr;
+  gap: 10px;
+  margin-top: 24px;
+}
+
+.cancelButton,
+.confirmDeleteButton {
+  min-height: 48px;
+  border-radius: 14px;
+  font: inherit;
+  font-size: .7rem;
+  font-weight: 950;
+  cursor: pointer;
+}
+
+.cancelButton {
+  border: 1px solid #dfdbea;
+  color: #55596d;
+  background: white;
+}
+
+.confirmDeleteButton {
+  border: 0;
+  color: white;
+  background: linear-gradient(135deg, #e85f5f, #c93f57);
+  box-shadow: 0 12px 26px rgba(201, 63, 87, .24);
+}
+
+.cancelButton:disabled,
+.confirmDeleteButton:disabled {
+  opacity: .6;
+  cursor: wait;
+}
+
+@media (max-width: 640px) {
+  .childActions { grid-column: 1 / -1; width: 100%; }
+  .modalActions { grid-template-columns: 1fr; }
+  .confirmModal { padding: 25px 20px; border-radius: 24px; }
+}
